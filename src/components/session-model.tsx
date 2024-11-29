@@ -45,7 +45,7 @@ export const CreateSessionModal: React.FC<CreateSessionModalProps> = ({ isOpen, 
 
   return (
     <Modal opened={isOpen} onClose={onClose} title="Session Required">
-      <text>{error !== 0 ? 'RGas not sufficient funds' : 'Create a stake session'}</text>
+      <text>{error !== 0 ? 'RGas not sufficient funds' : 'Create a session'}</text>
       <Stack mt="md">
         <Button onClick={handleCreateSession}>{error !== 0 ? 'Click To Faucet' : 'Create'}</Button>
       </Stack>

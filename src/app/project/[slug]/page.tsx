@@ -6,6 +6,8 @@ import { getXAvatar } from '@/utils/x'
 
 export default async function ProjectDetail({ params }: { params: { slug: string } }) {
   const { slug } = params
+  console.log("dddddd")
+  console.log('slug', slug)
   const projectsResponse = await fetch(
     `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/${process.env.AIRTABLE_PROJECT_TABLE_ID}?filterByFormula=${encodeURIComponent(`{Slug} = "${slug}"`)}&maxRecords=1`,
     {

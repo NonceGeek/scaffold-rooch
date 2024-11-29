@@ -13,7 +13,9 @@ import { isMainNetwork } from '@/utils/env'
 
 export default function RoochDappProvider({ children }: { children: ReactNode }) {
   const [queryClient] = useState(() => new QueryClient())
-  const network = isMainNetwork() ? 'mainnet' : 'testnet'
+  // TODO: update by env but not hard code
+  // const network = isMainNetwork() ? 'mainnet' : 'testnet'
+  const network = 'mainnet'
   return (
     <QueryClientProvider client={queryClient}>
       <RoochProvider networks={networkConfig} defaultNetwork={network}>

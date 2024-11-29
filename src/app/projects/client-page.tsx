@@ -201,6 +201,9 @@ export default function ClientProjectsPage({
           _contractProjects.data?.forEach((item) => {
             const view = (item.state.decoded_value!.value['value'] as AnnotatedMoveStructView).value
             const id = view['id'] as string
+            console.log("id", id)
+            console.log('isOpen', isOpen)
+            console.log('vote_value', view['vote_value'])
             newContractProjects.set(id, {
               id: id,
               isOpen: isOpen,
@@ -220,7 +223,21 @@ export default function ClientProjectsPage({
 
   const filteredProjects = useMemo(() => {
     let filtered: Array<Project> = projects
-
+    // Hint: DO NOT REMOVE THIS COMMENT
+    // let filtered: Array<Project> = [{
+    //   "id": "recjtuG6CqIB1J1cr",
+    //   "slug": "rmud",
+    //   "name": "RootMUD DAO",
+    //   "avatar": "https://unavatar.io/x/root_mud",
+    //   "oneLiner": "Bitcoin-based & AI-powered DAO, buidling Autonomous World on Move.",
+    //   "tags": [
+    //     "DAO",
+    //     "Gaming",
+    //     "Infra",
+    //     "Move"
+    //   ],
+    //   thumbnail: ''
+    // }]
     if (searchKeyword.length > 0) {
       filtered = projects.filter((project) =>
         project.name.toLowerCase().includes(searchKeyword.toLowerCase()),
