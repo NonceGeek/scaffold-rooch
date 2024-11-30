@@ -15,19 +15,21 @@ import {
   Input,
   Text,
   Title,
+  Center,
+  Table,
 } from '@mantine/core'
 import Link from 'next/link'
 import NavigationBar from '@/components/NavigationBar'
 import Footer from '@/components/Footer'
 
-import { IconChevronLeft, IconThumbUp, IconExternalLink } from '@tabler/icons-react'
+import { IconThumbUp, IconExternalLink } from '@tabler/icons-react'
 import {
   useCurrentAddress,
   useCurrentSession,
   useRoochClient,
   useRoochClientQuery,
 } from '@roochnetwork/rooch-sdk-kit'
-import { Args, Transaction } from '@roochnetwork/rooch-sdk'
+import { Args, Transaction, BitcoinAddress, BitcoinNetowkType } from '@roochnetwork/rooch-sdk'
 import { AnnotatedMoveStructView } from '@roochnetwork/rooch-sdk/src/client/types/generated'
 import { useEffect, useState } from 'react'
 import { getTokenInfo } from '@/app/stake/util'
@@ -37,6 +39,17 @@ import { CreateSessionModal } from '@/components/session-model'
 import { formatBalance } from '@/utils/balance'
 import Markdown from 'react-markdown'
 import 'github-markdown-css'
+
+type VoterInfo = {
+  address: string
+  value: number
+}
+
+type LogEntry = {
+  event: string
+  date: string
+  link?: string
+}
 
 export default function ProjectDetail({ project }: { project: ProjectDetail }) {
   console.log(project)
@@ -60,6 +73,15 @@ export default function ProjectDetail({ project }: { project: ProjectDetail }) {
     target: `${moduleName}::borrow_grow_project`,
     args: [projectListObj, Args.string(project.slug)],
   })
+  const [voters, setVoters] = useState<Array<VoterInfo>>([])
+  // TODO: get logs from the deno.
+  const [logs, setLogs] = useState<LogEntry[]>([
+    {
+      event: "Released Vote Panel as scaffold-rooch",
+      date: "2024-11-30",
+      link: "https://github.com/NonceGeek/scaffold-rooch"
+    }
+  ]);
 
   /* HINT: DO NOT DELETE THIS COMMENT
 
@@ -132,6 +154,140 @@ export default function ProjectDetail({ project }: { project: ProjectDetail }) {
         })
     })
   }, [data, client, contractAddr, addr])
+
+  useEffect(() => {
+    if (!data || data.vm_status !== 'Executed') {
+      return
+    }
+
+    // Get the table handle from the vote_detail field
+    const _voteDetail = (data.return_values![0].decoded_value as AnnotatedMoveStructView).value['vote_detail'] as AnnotatedMoveStructView
+    // TODO: hard code here, need to change to the var table handle.
+    const tableHandle = "0xf486bd41139780b89e06f5864c58af27d3e71a1feae43c9e9bef5beb587b700b"
+    // Query the table data
+    client
+      .listStates({
+        accessPath: `/table/${tableHandle}`,
+        stateOption: {
+          decode: true,
+        },
+      })
+      .then((result) => {
+        /* HINT: DO NOT DELETE THIS COMMENT
+        {
+    "data": [
+        {
+            "field_key": "0x613b579bfacfb952d28e42f0481b486298eb4a793f6f8cdadb95c6d06eba3fa3",
+            "state": {
+                "id": "0xf486bd41139780b89e06f5864c58af27d3e71a1feae43c9e9bef5beb587b700b613b579bfacfb952d28e42f0481b486298eb4a793f6f8cdadb95c6d06eba3fa3",
+                "owner": "rooch1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqhxqaen",
+                "owner_bitcoin_address": null,
+                "flag": 0,
+                "state_root": "0x5350415253455f4d45524b4c455f504c414345484f4c4445525f484153480000",
+                "size": "0",
+                "created_at": "1732526483985",
+                "updated_at": "1732526483985",
+                "object_type": "0x2::object::DynamicField<address, u256>",
+                "value": "0x08f95de5d6e20d590a93b961ae6fa2c489de943a6f55187ef325ffc40a1cdd641027000000000000000000000000000000000000000000000000000000000000",
+                "decoded_value": {
+                    "abilities": 12,
+                    "type": "0x2::object::DynamicField<address, u256>",
+                    "value": {
+                        "name": "0x08f95de5d6e20d590a93b961ae6fa2c489de943a6f55187ef325ffc40a1cdd64",
+                        "value": "10000"
+                    }
+                },
+                "display_fields": null
+            }
+        },
+        {
+            "field_key": "0x94c225a34fe579f810ab8da5b4796ae1f6148398187c82049c27298a98e86572",
+            "state": {
+                "id": "0xf486bd41139780b89e06f5864c58af27d3e71a1feae43c9e9bef5beb587b700b94c225a34fe579f810ab8da5b4796ae1f6148398187c82049c27298a98e86572",
+                "owner": "rooch1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqhxqaen",
+                "owner_bitcoin_address": null,
+                "flag": 0,
+                "state_root": "0x5350415253455f4d45524b4c455f504c414345484f4c4445525f484153480000",
+                "size": "0",
+                "created_at": "1732526808307",
+                "updated_at": "1732876610461",
+                "object_type": "0x2::object::DynamicField<address, u256>",
+                "value": "0x16f6cb1a8647e31980497c94778f9ce56a8fe51f2d55c333c167b50793847436a1636f0000000000000000000000000000000000000000000000000000000000",
+                "decoded_value": {
+                    "abilities": 12,
+                    "type": "0x2::object::DynamicField<address, u256>",
+                    "value": {
+                        "name": "0x16f6cb1a8647e31980497c94778f9ce56a8fe51f2d55c333c167b50793847436",
+                        "value": "7300001"
+                    }
+                },
+                "display_fields": null
+            }
+        },
+        {
+            "field_key": "0xbe181dcf24d53fa521f6942cadf419bfe5ef669cd60b9f16975b6c06e85dcd7c",
+            "state": {
+                "id": "0xf486bd41139780b89e06f5864c58af27d3e71a1feae43c9e9bef5beb587b700bbe181dcf24d53fa521f6942cadf419bfe5ef669cd60b9f16975b6c06e85dcd7c",
+                "owner": "rooch1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqhxqaen",
+                "owner_bitcoin_address": null,
+                "flag": 0,
+                "state_root": "0x5350415253455f4d45524b4c455f504c414345484f4c4445525f484153480000",
+                "size": "0",
+                "created_at": "1732690588305",
+                "updated_at": "1732708152991",
+                "object_type": "0x2::object::DynamicField<address, u256>",
+                "value": "0xbc873b62d2cba6e97a07b9a67086ce7f43979b26f8658114e4c10787f802750ee02e000000000000000000000000000000000000000000000000000000000000",
+                "decoded_value": {
+                    "abilities": 12,
+                    "type": "0x2::object::DynamicField<address, u256>",
+                    "value": {
+                        "name": "0xbc873b62d2cba6e97a07b9a67086ce7f43979b26f8658114e4c10787f802750e",
+                        "value": "12000"
+                    }
+                },
+                "display_fields": null
+            }
+        },
+        {
+            "field_key": "0xeeb77117006fa9cf6b362c20182972077bf4fa4eab4e79a0c63baab6871e41c9",
+            "state": {
+                "id": "0xf486bd41139780b89e06f5864c58af27d3e71a1feae43c9e9bef5beb587b700beeb77117006fa9cf6b362c20182972077bf4fa4eab4e79a0c63baab6871e41c9",
+                "owner": "rooch1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqhxqaen",
+                "owner_bitcoin_address": null,
+                "flag": 0,
+                "state_root": "0x5350415253455f4d45524b4c455f504c414345484f4c4445525f484153480000",
+                "size": "0",
+                "created_at": "1732708352696",
+                "updated_at": "1732708352696",
+                "object_type": "0x2::object::DynamicField<address, u256>",
+                "value": "0xefe83ea327c191494302eb3c27b495f3f33961ef2d35ff47629df353545ec916a086010000000000000000000000000000000000000000000000000000000000",
+                "decoded_value": {
+                    "abilities": 12,
+                    "type": "0x2::object::DynamicField<address, u256>",
+                    "value": {
+                        "name": "0xefe83ea327c191494302eb3c27b495f3f33961ef2d35ff47629df353545ec916",
+                        "value": "100000"
+                    }
+                },
+                "display_fields": null
+            }
+        }
+    ],
+    "next_cursor": "0xeeb77117006fa9cf6b362c20182972077bf4fa4eab4e79a0c63baab6871e41c9",
+    "has_next_page": false
+}
+        */
+        console.log("result", result)
+        const items = result.data.map((item) => {
+          const view = item.state.decoded_value!.value
+          return {
+            address: view.name.toString(),
+            value: Number(view.value),
+          }
+        }).sort((a, b) => b.value - a.value)
+        setVoters(items)
+      })
+  }, [data, client])
 
   const handleVote = async () => {
     if (addr === null) {
@@ -343,9 +499,36 @@ export default function ProjectDetail({ project }: { project: ProjectDetail }) {
       </Container>
       <Container size="sm" py="xl">
         <Card mt="sm" radius="lg" withBorder>
-          <Flex direction="column" align="center">
-            <Title order={3}>Voter List</Title>
-            <Text mt="4">❤️🤘❤️ List all the voters! ❤️🤘❤️</Text>
+          <Flex direction="column">
+            <Title order={3} ta="center" mb="md">Voter List</Title>
+            <Text ta="center" mb="md">❤️🤘❤️ List all the voters! ❤️🤘❤️</Text>
+            <Table>
+              <Table.Thead>
+                <Table.Tr>
+                  <Table.Th>Address</Table.Th>
+                  <Table.Th ta="right">Votes</Table.Th>
+                </Table.Tr>
+              </Table.Thead>
+              <Table.Tbody>
+                {voters.length ? (
+                  voters.map((voter) => (
+                    <Table.Tr key={voter.address}>
+                      {/* TODO: transfer the hex to the btc address */}
+                      <Table.Td>{voter.address}</Table.Td>
+                      <Table.Td ta="right">{voter.value}</Table.Td>
+                    </Table.Tr>
+                  ))
+                ) : (
+                  <Table.Tr>
+                    <Table.Td colSpan={2}>
+                      <Center>
+                        <Text c="gray.6">No voters yet.</Text>
+                      </Center>
+                    </Table.Td>
+                  </Table.Tr>
+                )}
+              </Table.Tbody>
+            </Table>
           </Flex>
         </Card>
       </Container>
@@ -355,6 +538,42 @@ export default function ProjectDetail({ project }: { project: ProjectDetail }) {
           <Flex direction="column" align="center">
             <Title order={3}>Project Log</Title>
             <Text mt="4">🌱🌸🌺 Record the project's growth. 🌱🌸🌺</Text>
+            <Table mt="md">
+              <Table.Thead>
+                <Table.Tr>
+                  <Table.Th>Event</Table.Th>
+                  <Table.Th>Date</Table.Th>
+
+                </Table.Tr>
+              </Table.Thead>
+              <Table.Tbody>
+                {logs?.length ? (
+                  logs.map((log) => (
+                    <Table.Tr key={log.date}>
+                      <Table.Td>
+                        {log.link ? (
+                          <Anchor href={log.link} target="_blank" rel="noopener noreferrer">
+                            {log.event}
+                          </Anchor>
+                        ) : (
+                          log.event
+                        )}
+                      </Table.Td>
+                      <Table.Td>{new Date(log.date).toISOString().split('T')[0]}</Table.Td>
+
+                    </Table.Tr>
+                  ))
+                ) : (
+                  <Table.Tr>
+                    <Table.Td colSpan={2}>
+                      <Center>
+                        <Text c="gray.6">No logs yet.</Text>
+                      </Center>
+                    </Table.Td>
+                  </Table.Tr>
+                )}
+              </Table.Tbody>
+            </Table>
           </Flex>
         </Card>
       </Container>

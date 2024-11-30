@@ -4,11 +4,11 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Box, Container, Anchor, Flex, Button, UnstyledButton, Stack, Drawer } from '@mantine/core'
+import { Box, Container, Anchor, Flex, Button, UnstyledButton, Stack, Drawer, Menu } from '@mantine/core'
 import { useDisclosure, useMediaQuery } from '@mantine/hooks'
 import LogoSVG from '@/assets/logo.svg'
 
-import { IconMenu2 } from '@tabler/icons-react'
+import { IconMenu2, IconChevronDown } from '@tabler/icons-react'
 import { useCurrentAddress } from '@roochnetwork/rooch-sdk-kit'
 import { shortAddress } from '@/utils/address'
 import { WalletConnectModal } from './connect-model'
@@ -37,16 +37,36 @@ function DesktopNavigationBar({ style }: { style?: any }) {
           >
             Home
           </Anchor>
-          <Anchor
-            component="a"
-            href="https://grow.rooch.network/stake"
-            c="dark"
-            underline="never"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Get $GROW
-          </Anchor>
+          <Menu trigger="hover" position="bottom">
+            <Menu.Target>
+              <Anchor
+                c="dark"
+                underline="never"
+                style={{ display: 'flex', alignItems: 'center', gap: 4 }}
+              >
+                Earn $GROW <IconChevronDown size={16} />
+              </Anchor>
+            </Menu.Target>
+
+            <Menu.Dropdown>
+              <Menu.Item
+                component="a"
+                href="https://grow.rooch.network/stake"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Stake 2 Earn
+              </Menu.Item>
+              <Menu.Item
+                component="a"
+                href="https://github.com/orgs/NonceGeek/discussions?discussions_q=is%3Aopen+label%3Arooch"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Contribute 2 Earn
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
           <Anchor
             component="a"
             href="https://grow.rooch.network/docs"
@@ -135,7 +155,17 @@ function MobileNavigationBar({ style }: { style?: any }) {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Get $GROW
+            Stake 2 Earn
+          </Button>
+          <Button
+            component="a"
+            href="https://grow.rooch.network/contribute"
+            style={{ borderRadius: '0.325rem' }}
+            variant="outline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Contribute 2 Earn
           </Button>
           <Button
             component={Link}
