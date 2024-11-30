@@ -38,49 +38,34 @@ function DesktopNavigationBar({ style }: { style?: any }) {
             Home
           </Anchor>
           <Anchor
-            component={Link}
-            href="/stake"
+            component="a"
+            href="https://grow.rooch.network/stake"
             c="dark"
             underline="never"
-            fw={pathname === '/grow' ? '500' : '400'}
+            target="_blank"
+            rel="noopener noreferrer"
           >
             Get $GROW
           </Anchor>
           <Anchor
-            component={Link}
-            href="/projects"
+            component="a"
+            href="https://grow.rooch.network/docs"
             c="dark"
             underline="never"
-            fw={pathname === '/projects' ? '500' : '400'}
-          >
-            Projects
-          </Anchor>
-          <Anchor
-            component={Link}
-            href="/docs"
-            c="dark"
-            underline="never"
-            fw={pathname === '/docs' ? '500' : '400'}
+            target="_blank"
+            rel="noopener noreferrer"
           >
             Docs
           </Anchor>
           <Anchor
-            component={Link}
-            href="/portfolio"
+            component="a"
+            href="https://grow.rooch.network/portfolio"
             c="dark"
             underline="never"
-            fw={pathname === '/portfolio' ? '500' : '400'}
+            target="_blank"
+            rel="noopener noreferrer"
           >
             My Portfolio
-          </Anchor>
-          <Anchor
-            component={Link}
-            target="_blank"
-            href="https://airtable.com/app442wyztoEmOPul/pagOFIio54GoXGdZf/form"
-            c="dark"
-            underline="never"
-          >
-            Submit Project
           </Anchor>
           <Button
             radius="md"
@@ -143,10 +128,12 @@ function MobileNavigationBar({ style }: { style?: any }) {
             Home
           </Button>
           <Button
-            component={Link}
-            href="/stake"
+            component="a"
+            href="https://grow.rooch.network/stake"
             style={{ borderRadius: '0.325rem' }}
-            variant={pathname === '/stake' ? 'filled' : 'outline'}
+            variant="outline"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             Get $GROW
           </Button>
@@ -159,10 +146,12 @@ function MobileNavigationBar({ style }: { style?: any }) {
             Projects
           </Button>
           <Button
-            component={Link}
-            href="/docs"
+            component="a"
+            href="https://grow.rooch.network/docs"
             style={{ borderRadius: '0.325rem' }}
-            variant={pathname === '/docs' ? 'filled' : 'outline'}
+            variant="outline"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             Docs
           </Button>

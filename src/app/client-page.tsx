@@ -2,270 +2,362 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client'
 
-import { useRef, useState, useEffect } from 'react'
-import Link from 'next/link'
 import {
+  Anchor,
+  Badge,
   Box,
   Button,
+  Card,
   Container,
   Flex,
-  Grid,
   Group,
-  Stack,
+  Image,
+  Input,
   Text,
-  ThemeIcon,
   Title,
-  useMantineTheme,
 } from '@mantine/core'
-import { useMediaQuery } from '@mantine/hooks'
+import Link from 'next/link'
 import NavigationBar from '@/components/NavigationBar'
 import Footer from '@/components/Footer'
 
-import { IconQuestionMark, IconChevronCompactRight } from '@tabler/icons-react'
-import Step1SVG from '@/assets/step-1.svg'
-import Step2SVG from '@/assets/step-2.svg'
-import Step3SVG from '@/assets/step-3.svg'
-import Step4SVG from '@/assets/step-4.svg'
+import { IconChevronLeft, IconThumbUp, IconExternalLink } from '@tabler/icons-react'
+import {
+  useCurrentAddress,
+  useCurrentSession,
+  useRoochClient,
+  useRoochClientQuery,
+} from '@roochnetwork/rooch-sdk-kit'
+import { Args, Transaction } from '@roochnetwork/rooch-sdk'
+import { AnnotatedMoveStructView } from '@roochnetwork/rooch-sdk/src/client/types/generated'
+import { useEffect, useState } from 'react'
+import { getTokenInfo } from '@/app/stake/util'
+import { useNetworkVariable } from '@/app/networks'
+import { WalletConnectModal } from '@/components/connect-model'
+import { CreateSessionModal } from '@/components/session-model'
+import { formatBalance } from '@/utils/balance'
+import Markdown from 'react-markdown'
+import 'github-markdown-css'
 
-const IconWall = ({ size = 56 }) => {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
+export default function ProjectDetail({ project }: { project: ProjectDetail }) {
+  console.log(project)
+  const [showConnectModel, setShowConnectModel] = useState(false)
+  const [showCreateSessionModel, setShowCreateSessionModel] = useState(false)
+  const session = useCurrentSession()
+  const contractAddr = useNetworkVariable('contractAddr')
+  const contractVersion = useNetworkVariable('contractVersion')
+  const [balance, setBalance] = useState(-1)
+  const [amount, setAmount] = useState('')
+  const client = useRoochClient()
+  const addr = useCurrentAddress()
+  const moduleName = `${contractAddr}::grow_information_${contractVersion}`
+  const [loading, setLoading] = useState(false)
+  const projectListObj = Args.object({
+    address: contractAddr,
+    module: `grow_information_${contractVersion}`,
+    name: 'GrowProjectList',
+  })
+  const { data, refetch } = useRoochClientQuery('executeViewFunction', {
+    target: `${moduleName}::borrow_grow_project`,
+    args: [projectListObj, Args.string(project.slug)],
+  })
+
+  /* HINT: DO NOT DELETE THIS COMMENT
+
+  Data Example:
+
+  [
+    {
+        "value": {
+            "type_tag": "0x701c21bf1c8cd5af8c42983890d8ca55e7a820171b8e744c13f2d9998bf76cc3::grow_information_v3::GrowProject",
+            "value": "0x04726d756401c1d212ff36b82ad75796ecdd1e8e9f09bca2891ece1945194b6b380dbacbff12314071000000000000000000000000000000000000000000000000000000000001f486bd41139780b89e06f5864c58af27d3e71a1feae43c9e9bef5beb587b700b0000"
+        },
+        "decoded_value": {
+            "abilities": 12,
+            "type": "0x701c21bf1c8cd5af8c42983890d8ca55e7a820171b8e744c13f2d9998bf76cc3::grow_information_v3::GrowProject",
+            "value": {
+                "id": "rmud",
+                "metadata": {
+                    "abilities": 6,
+                    "type": "0x701c21bf1c8cd5af8c42983890d8ca55e7a820171b8e744c13f2d9998bf76cc3::grow_information_v3::GrowMeta",
+                    "value": {
+                        "key": [],
+                        "value": []
+                    }
+                },
+                "vote_detail": {
+                    "abilities": 4,
+                    "type": "0x2::table::Table<address, u256>",
+                    "value": {
+                        "handle": {
+                            "abilities": 12,
+                            "type": "0x2::object::Object<0x2::table::TablePlaceholder>",
+                            "value": {
+                                "id": "0xf486bd41139780b89e06f5864c58af27d3e71a1feae43c9e9bef5beb587b700b"
+                            }
+                        }
+                    }
+                },
+                "vote_store": {
+                    "abilities": 12,
+                    "type": "0x2::object::Object<0x3::coin_store::CoinStore<0x701c21bf1c8cd5af8c42983890d8ca55e7a820171b8e744c13f2d9998bf76cc3::grow_bitcoin::GROW>>",
+                    "value": {
+                        "id": "0xc1d212ff36b82ad75796ecdd1e8e9f09bca2891ece1945194b6b380dbacbff12"
+                    }
+                },
+                "vote_value": "7422001"
+            }
+        }
+    }
+]
+
+  */
 
   useEffect(() => {
-    const updateDimensions = () => {
-      if (containerRef.current) {
-        setDimensions({
-          width: containerRef.current.clientWidth,
-          height: containerRef.current.clientHeight,
+
+    if (!addr) {
+      return
+    }
+    if (!data || data.vm_status !== 'Executed') {
+      return
+    }
+    getTokenInfo(client, contractAddr).then((result) => {
+
+      client
+        .getBalance({
+          coinType: result.coinInfo.type,
+          owner: addr.genRoochAddress().toStr() || '',
         })
-      }
+        .then((result) => {
+          setBalance(Number(result.balance))
+        })
+    })
+  }, [data, client, contractAddr, addr])
+
+  const handleVote = async () => {
+    if (addr === null) {
+      setShowConnectModel(true)
+      return
+    }
+    if (session === null) {
+      setShowCreateSessionModel(true)
+      return
+    }
+    setLoading(true)
+    const tx = new Transaction()
+    tx.callFunction({
+      target: `${moduleName}::vote_entry`,
+      args: [projectListObj, Args.string(project.slug), Args.u256(BigInt(amount))],
+    })
+    const reuslt = await client.signAndExecuteTransaction({
+      transaction: tx,
+      signer: session,
+    })
+
+    if (reuslt.execution_info.status.type === 'executed') {
+      await refetch()
     }
 
-    updateDimensions()
-    window.addEventListener('resize', updateDimensions)
-    return () => window.removeEventListener('resize', updateDimensions)
-  }, [])
-  const gap = size / 1.5
-  const iconWithMargin = size + gap
-  const diagonalDistance = (Math.sqrt(2) * iconWithMargin) / 2
-
-  const createIcon = (row: number, col: number) => {
-    const x = col * diagonalDistance
-    const y = row * diagonalDistance
-    return (
-      <g
-        key={`${row}-${col}`}
-        transform={`translate(${x}, ${y}) rotate(-45, ${size / 2}, ${size / 2})`}
-      >
-        <svg width={size} height={size} viewBox="0 0 4091.27 4091.73">
-          <path
-            fill="#F7931A"
-            d="M4030.06 2540.77C3756.82 3636.78 2646.74 4303.79 1550.6 4030.48 454.92 3757.24-212.09 2647.09 61.27 1551.17c273.12-1096.13 1383.2-1763.19 2479-1489.95C3636.33 334.46 4303.3 1444.73 4030.03 2540.79l.02-.02z"
-          />
-          <path
-            fill="#fff"
-            d="M2947.77 1754.38c40.72-272.26-166.56-418.61-450-516.24l91.95-368.8-224.5-55.94-89.51 359.09c-59.02-14.72-119.63-28.59-179.87-42.34L2186 768.69l-224.36-55.94-92 368.68c-48.84-11.12-96.81-22.11-143.35-33.69l.26-1.16-309.59-77.31-59.72 239.78s166.56 38.18 163.05 40.53c90.91 22.69 107.35 82.87 104.62 130.57l-104.74 420.15c6.26 1.59 14.38 3.89 23.34 7.49-7.49-1.86-15.46-3.89-23.73-5.87l-146.81 588.57c-11.11 27.62-39.31 69.07-102.87 53.33 2.25 3.26-163.17-40.72-163.17-40.72l-111.46 256.98 292.15 72.83c54.35 13.63 107.61 27.89 160.06 41.3l-92.9 373.03 224.24 55.94 92-369.07c61.26 16.63 120.71 31.97 178.91 46.43l-91.69 367.33 224.51 55.94 92.89-372.33c382.82 72.45 670.67 43.24 791.83-303.02 97.63-278.78-4.86-439.58-206.26-544.44 146.69-33.83 257.18-130.31 286.64-329.61l-.07-.05zm-512.93 719.26c-69.38 278.78-538.76 128.08-690.94 90.29l123.28-494.2c152.17 37.99 640.17 113.17 567.67 403.91zm69.43-723.3c-63.29 253.58-453.96 124.75-580.69 93.16l111.77-448.21c126.73 31.59 534.85 90.55 468.94 355.05h-.02z"
-          />
-        </svg>
-      </g>
-    )
+    setLoading(false)
   }
-
-  const patternWidth = diagonalDistance * 4
-  const patternHeight = diagonalDistance * 4
-
-  const icons = [
-    createIcon(0, 0),
-    createIcon(0, 2),
-    createIcon(1, 1),
-    createIcon(1, 3),
-    createIcon(2, 0),
-    createIcon(2, 2),
-    createIcon(3, 1),
-    createIcon(3, 3),
-  ]
-
-  return (
-    <div
-      ref={containerRef}
-      style={{
-        position: 'absolute',
-        zIndex: 1,
-        inset: 0,
-        opacity: 0.04,
-        pointerEvents: 'none',
-      }}
-    >
-      <svg width={dimensions.width} height={dimensions.height} style={{ overflow: 'hidden' }}>
-        <defs>
-          <pattern
-            id="iconPattern"
-            x="0"
-            y="0"
-            width={patternWidth}
-            height={patternHeight}
-            patternUnits="userSpaceOnUse"
-          >
-            {icons}
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#iconPattern)" />
-      </svg>
-    </div>
-  )
-}
-
-export default function Home({ faq }: { faq: FAQ[] }) {
-  const theme = useMantineTheme()
-  const desktopMatches = useMediaQuery('(min-width: 48em)')
-  const mobileMatches = useMediaQuery('(min-width: 28em)')
 
   return (
     <>
-      <Box component="header" py={{ base: '12rem', md: '16rem' }} style={{ position: 'relative' }}>
-        <NavigationBar style={{ position: 'absolute', zIndex: 9, top: 0, left: 0, right: 0 }} />
+      <NavigationBar />
+      <WalletConnectModal isOpen={showConnectModel} onClose={() => setShowConnectModel(false)} />
+      <CreateSessionModal
+        isOpen={showCreateSessionModel}
+        onClose={() => setShowCreateSessionModel(false)}
+      />
+      <Container size="sm" py="xl">
+        <Card mt="sm" radius="lg" withBorder>
+          <Group align="center">
+            <Image src={project.avatar} alt="avatar" w="80" miw="80" h="80" radius="lg" />
+            <Box>
+              <Title order={2}>{project.name}</Title>
+              <Text c="gray.7">{project.oneLiner}</Text>
+            </Box>
+          </Group>
 
-        <IconWall />
-        <Container size="lg" style={{ position: 'relative', zIndex: 2 }}>
-          <Stack align="center" gap="0">
-            <Title order={1} fz={{ base: '2.5rem', sm: '3.5rem', md: '5rem' }} fw="200" ta="center">
-              Grow Bitcoin
-            </Title>
-            <Text size="lg" c="gray.7" ta="center">
-              Backing Ideas with Bitcoin Staking
-            </Text>
-            <Group mt="lg" justify="center">
-              <Button
-                component={Link}
-                href="/stake"
-                radius="md"
-                variant="outline"
-                size="md"
-                fullWidth={!mobileMatches}
-              >
-                Get $GROW
-              </Button>
-              <Button
-                component={Link}
-                href="/projects"
-                radius="md"
-                size="md"
-                fullWidth={!mobileMatches}
-              >
-                Vote for Ideas
-              </Button>
+          <Box mt="lg">
+            {/* <Title order={3}>About the Project</Title> */}
+            <Markdown
+              className="markdown-body"
+              components={{
+                p: ({ children }) => (
+                  <Text mt="xs" mb="xs">
+                    {children}
+                  </Text>
+                ),
+                h1: ({ children }) => (
+                  <Title order={1} mt="lg" mb="md">
+                    {children}
+                  </Title>
+                ),
+                h2: ({ children }) => (
+                  <Title order={2} mt="lg" mb="md">
+                    {children}
+                  </Title>
+                ),
+                h3: ({ children }) => (
+                  <Title order={3} mt="lg" mb="md">
+                    {children}
+                  </Title>
+                ),
+                ul: ({ children }) => (
+                  <Box component="ul" ml="md" mt="xs" mb="xs">
+                    {children}
+                  </Box>
+                ),
+                li: ({ children }) => (
+                  <Text component="li" mt="xs">
+                    {children}
+                  </Text>
+                ),
+                a: ({ href, children }) => (
+                  <Anchor href={href} target="_blank" rel="noopener noreferrer">
+                    {children}
+                  </Anchor>
+                ),
+              }}
+            >
+              {project.description}
+            </Markdown>
+          </Box>
+
+          <Box mt="lg">
+            <Title order={3}>Tags</Title>
+            <Group mt="8">
+              {project.tags.map((tag) => (
+                <Badge key={tag} bg="dark.3">
+                  {tag}
+                </Badge>
+              ))}
             </Group>
-          </Stack>
-        </Container>
-      </Box>
+          </Box>
 
-      <Box component="section" py="4rem" bg="gray.0">
-        <Container size="lg">
-          <Flex
-            gap={{ base: '3rem', xs: '2.5rem 4%', sm: 'md' }}
-            align="flex-top"
-            wrap={{ base: 'wrap', sm: 'nowrap' }}
-          >
-            <Stack gap="0" ta="center" align="center" w={{ base: '100%', xs: '48%', sm: 'auto' }}>
-              <ThemeIcon size="5rem" radius="50%">
-                <Step1SVG width={30} />
-              </ThemeIcon>
-              <Title order={3} size="1.25rem" fw="500" mt="12" mb="4">
-                Stake
-              </Title>
-              <Text size="md" c="gray.7">
-                Stake Bitcoin via Babylon, LRT or Self-Staking
-              </Text>
-            </Stack>
-            <IconChevronCompactRight
-              size="5rem"
-              style={{
-                alignSelf: 'center',
-                display: desktopMatches ? 'block' : 'none',
-              }}
-              color={theme.colors.gray[2]}
-            />
-            <Stack gap="0" ta="center" align="center" w={{ base: '100%', xs: '48%', sm: 'auto' }}>
-              <ThemeIcon size="5rem" radius="50%">
-                <Step2SVG width={40} />
-              </ThemeIcon>
-              <Title order={3} size="1.25rem" fw="500" mt="12" mb="4">
-                Claim
-              </Title>
-              <Text size="md" c="gray.7">
-                Claim your $GROW token with your staking
-              </Text>
-            </Stack>
-            <IconChevronCompactRight
-              size="5rem"
-              style={{
-                alignSelf: 'center',
-                display: desktopMatches ? 'block' : 'none',
-              }}
-              color={theme.colors.gray[2]}
-            />
-            <Stack gap="0" ta="center" align="center" w={{ base: '100%', xs: '48%', sm: 'auto' }}>
-              <ThemeIcon size="5rem" radius="50%">
-                <Step3SVG width={36} />
-              </ThemeIcon>
-              <Title order={3} size="1.25rem" fw="500" mt="12" mb="4">
-                Vote
-              </Title>
-              <Text size="md" c="gray.7">
-                Vote for Ideas with your $GROW token
-              </Text>
-            </Stack>
-            <IconChevronCompactRight
-              size="5rem"
-              style={{
-                alignSelf: 'center',
-                display: desktopMatches ? 'block' : 'none',
-              }}
-              color={theme.colors.gray[2]}
-            />
-            <Stack gap="0" ta="center" align="center" w={{ base: '100%', xs: '48%', sm: 'auto' }}>
-              <ThemeIcon size="5rem" radius="50%">
-                <Step4SVG width={44} />
-              </ThemeIcon>
-              <Title order={3} size="1.25rem" fw="500" mt="12" mb="4">
-                Earn
-              </Title>
-              <Text size="md" c="gray.7">
-                Earn tokens as ideas grow into projects.
-              </Text>
-            </Stack>
+          <Group mt="lg">
+            <Anchor
+              href={project.website}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 2 }}
+            >
+              Website <IconExternalLink size="1em" />
+            </Anchor>
+            <Anchor
+              href={project.community}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 2 }}
+            >
+              Community <IconExternalLink size="1em" />
+            </Anchor>
+            <Anchor
+              href={project.twitter}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 2 }}
+            >
+              Twitter <IconExternalLink size="1em" />
+            </Anchor>
+            <Anchor
+              href={project.github}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 2 }}
+            >
+              Github <IconExternalLink size="1em" />
+            </Anchor>
+          </Group>
+          {data?.vm_status === 'Executed' ? (
+            <>
+              <Flex
+                align={{ base: 'unset', xs: 'center' }}
+                justify="space-between"
+                gap="xs"
+                mt="xl"
+                direction={{ base: 'column', xs: 'row' }}
+              >
+                <Button
+                  variant="outline"
+                  leftSection={<IconThumbUp size="1.5em" />}
+                  radius="xl"
+                  disabled={true}
+                >
+                  {
+                    (data!.return_values![0].decoded_value as AnnotatedMoveStructView).value[
+                      'vote_value'
+                    ] as string
+                  }
+                </Button>
+                <Group gap="0">
+                  <Input
+                    flex={1}
+                    placeholder="Amount"
+                    radius="md"
+                    disabled={!addr || balance === 0}
+                    type="number"
+                    value={amount}
+                    onChange={(e) => {
+                      setAmount(e.target.value)
+                    }}
+                    styles={{
+                      input: {
+                        borderTopRightRadius: 0,
+                        borderBottomRightRadius: 0,
+                        borderRight: 0,
+                      },
+                    }}
+                  />
+                  <Button
+                    radius="md"
+                    disabled={!addr || balance === 0}
+                    loading={loading}
+                    style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
+                    onClick={handleVote}
+                  >
+                    Vote
+                  </Button>
+                </Group>
+              </Flex>
+              <Flex ta="right" gap="xs" justify="flex-end" mt="6" c="gray.7">
+                {addr ? (
+                  <>
+                    <Text size="sm">{`Your $GROW Balance: ${balance === -1 ? '-' : formatBalance(balance)}`}</Text>
+                    {balance === 0 ? (
+                      <Link href={'/stake'} style={{ color: 'inherit', fontSize: 'smaller' }}>
+                        <Text size="sm">To Stake</Text>
+                      </Link>
+                    ) : (
+                      <></>
+                    )}
+                  </>
+                ) : (
+                  <Text size="sm">Please connect your wallet first</Text>
+                )}
+              </Flex>
+            </>
+          ) : (
+            <></>
+          )}
+          {/*<Card bg="gray.0" radius="lg" mt="xl" p="lg">*/}
+          {/*  <Title order={4}>Your Votes</Title>*/}
+          {/*  <Text mt="4">*/}
+          {/*    You have voted 4 times for the project and earned 4 BitXP as well*/}
+          {/*    as 4 Project Alpha XP.*/}
+          {/*  </Text>*/}
+          {/*</Card>*/}
+        </Card>
+      </Container>
+      <Container size="sm" py="xl">
+        <Card mt="sm" radius="lg" withBorder>
+          <Flex direction="column" align="center">
+            <Title order={3}>Voter List</Title>
+            <Text mt="4">❤️🤘❤️ List all the voters! ❤️🤘❤️</Text>
           </Flex>
-        </Container>
-      </Box>
+        </Card>
+      </Container>
 
-      <Box component="section" py="4rem">
-        <Container size="lg">
-          <Stack gap="0">
-            <Title order={2} size="2.75rem">
-              FAQs
-            </Title>
-            <Text c="gray.7">What, Why, and How</Text>
-          </Stack>
-
-          <Grid gutter="2.5rem" mt="3rem">
-            {faq.map((i) => (
-              <Grid.Col key={i.questions} span={{ base: 12, xs: 6, md: 4 }}>
-                <ThemeIcon size="xl" radius="md">
-                  <IconQuestionMark />
-                </ThemeIcon>
-                <Title order={4} fw="500" mt="10" mb="4">
-                  {i.questions}
-                </Title>
-                <Text
-                  size="md"
-                  c="gray.7"
-                  dangerouslySetInnerHTML={{ __html: i.answer.replace(/\n/g, '<br />') }}
-                />
-              </Grid.Col>
-            ))}
-          </Grid>
-        </Container>
-      </Box>
+      <Container size="sm" py="xl">
+        <Card mt="sm" radius="lg" withBorder>
+          <Flex direction="column" align="center">
+            <Title order={3}>Project Log</Title>
+            <Text mt="4">🌱🌸🌺 Record the project's growth. 🌱🌸🌺</Text>
+          </Flex>
+        </Card>
+      </Container>
 
       <Footer />
     </>

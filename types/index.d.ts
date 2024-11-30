@@ -21,6 +21,7 @@ interface ProjectDetail extends Project {
   website: string
   twitter: string
   github: string
+  community: string
 }
 
 interface FAQ {
