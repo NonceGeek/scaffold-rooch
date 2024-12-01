@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Box, Container, Stack, Group, Anchor } from '@mantine/core'
 import LogoSVG from '@/assets/logo.svg'
 
-import { IconBrandX, IconBrandTelegram } from '@tabler/icons-react'
+import { IconBrandX, IconBrandTelegram, IconBrandGithub } from '@tabler/icons-react'
 
 export default function Footer() {
   return (
@@ -18,6 +18,9 @@ export default function Footer() {
           <Group gap="xs">
             <Anchor c="dark" href="https://twitter.com/root_mud">
               <IconBrandX />
+            </Anchor>
+            <Anchor c="dark" href="https://github.com/rootmud">
+              <IconBrandGithub />
             </Anchor>
             <Anchor c="dark" href="https://t.me/rootmud">
               <IconBrandTelegram />

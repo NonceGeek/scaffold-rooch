@@ -29,7 +29,7 @@ import {
   useRoochClient,
   useRoochClientQuery,
 } from '@roochnetwork/rooch-sdk-kit'
-import { Args, Transaction, BitcoinAddress, BitcoinNetowkType } from '@roochnetwork/rooch-sdk'
+import { Args, Transaction } from '@roochnetwork/rooch-sdk'
 import { AnnotatedMoveStructView } from '@roochnetwork/rooch-sdk/src/client/types/generated'
 import { useEffect, useState } from 'react'
 import { getTokenInfo } from '@/app/stake/util'
@@ -75,13 +75,13 @@ export default function ProjectDetail({ project }: { project: ProjectDetail }) {
   })
   const [voters, setVoters] = useState<Array<VoterInfo>>([])
   // TODO: get logs from the deno.
-  const [logs, setLogs] = useState<LogEntry[]>([
+  const [logs] = useState<LogEntry[]>([
     {
-      event: "Released Vote Panel as scaffold-rooch",
-      date: "2024-11-30",
-      link: "https://github.com/NonceGeek/scaffold-rooch"
-    }
-  ]);
+      event: 'Released Vote Panel as scaffold-rooch',
+      date: '2024-11-30',
+      link: 'https://github.com/NonceGeek/scaffold-rooch',
+    },
+  ])
 
   /* HINT: DO NOT DELETE THIS COMMENT
 
@@ -135,7 +135,6 @@ export default function ProjectDetail({ project }: { project: ProjectDetail }) {
   */
 
   useEffect(() => {
-
     if (!addr) {
       return
     }
@@ -143,7 +142,6 @@ export default function ProjectDetail({ project }: { project: ProjectDetail }) {
       return
     }
     getTokenInfo(client, contractAddr).then((result) => {
-
       client
         .getBalance({
           coinType: result.coinInfo.type,
@@ -161,9 +159,11 @@ export default function ProjectDetail({ project }: { project: ProjectDetail }) {
     }
 
     // Get the table handle from the vote_detail field
-    const _voteDetail = (data.return_values![0].decoded_value as AnnotatedMoveStructView).value['vote_detail'] as AnnotatedMoveStructView
+    const _voteDetail = (data.return_values![0].decoded_value as AnnotatedMoveStructView).value[
+      'vote_detail'
+    ] as AnnotatedMoveStructView
     // TODO: hard code here, need to change to the var table handle.
-    const tableHandle = "0xf486bd41139780b89e06f5864c58af27d3e71a1feae43c9e9bef5beb587b700b"
+    const tableHandle = '0xf486bd41139780b89e06f5864c58af27d3e71a1feae43c9e9bef5beb587b700b'
     // Query the table data
     client
       .listStates({
@@ -277,14 +277,16 @@ export default function ProjectDetail({ project }: { project: ProjectDetail }) {
     "has_next_page": false
 }
         */
-        console.log("result", result)
-        const items = result.data.map((item) => {
-          const view = item.state.decoded_value!.value
-          return {
-            address: view.name.toString(),
-            value: Number(view.value),
-          }
-        }).sort((a, b) => b.value - a.value)
+        console.log('result', result)
+        const items = result.data
+          .map((item) => {
+            const view = item.state.decoded_value!.value
+            return {
+              address: view.name.toString(),
+              value: Number(view.value),
+            }
+          })
+          .sort((a, b) => b.value - a.value)
         setVoters(items)
       })
   }, [data, client])
@@ -500,8 +502,12 @@ export default function ProjectDetail({ project }: { project: ProjectDetail }) {
       <Container size="sm" py="xl">
         <Card mt="sm" radius="lg" withBorder>
           <Flex direction="column">
-            <Title order={3} ta="center" mb="md">Voter List</Title>
-            <Text ta="center" mb="md">❤️🤘❤️ List all the voters! ❤️🤘❤️</Text>
+            <Title order={3} ta="center" mb="md">
+              Voter List
+            </Title>
+            <Text ta="center" mb="md">
+              ❤️🤘❤️ List all the voters! ❤️🤘❤️
+            </Text>
             <Table>
               <Table.Thead>
                 <Table.Tr>
@@ -537,13 +543,12 @@ export default function ProjectDetail({ project }: { project: ProjectDetail }) {
         <Card mt="sm" radius="lg" withBorder>
           <Flex direction="column" align="center">
             <Title order={3}>Project Log</Title>
-            <Text mt="4">🌱🌸🌺 Record the project's growth. 🌱🌸🌺</Text>
+            <Text mt="4">🌱🌸🌺 Record the project&apos;s growth. 🌱🌸🌺</Text>
             <Table mt="md">
               <Table.Thead>
                 <Table.Tr>
                   <Table.Th>Event</Table.Th>
                   <Table.Th>Date</Table.Th>
-
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody>
@@ -560,7 +565,6 @@ export default function ProjectDetail({ project }: { project: ProjectDetail }) {
                         )}
                       </Table.Td>
                       <Table.Td>{new Date(log.date).toISOString().split('T')[0]}</Table.Td>
-
                     </Table.Tr>
                   ))
                 ) : (
