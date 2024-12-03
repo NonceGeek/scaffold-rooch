@@ -503,7 +503,7 @@ export default function ProjectDetail({ project }: { project: ProjectDetail }) {
         <Card mt="sm" radius="lg" withBorder>
           <Flex direction="column">
             <Title order={3} ta="center" mb="md">
-              Voter List
+              Voter List - <b>{voters.length}</b> ฅ^•⩊•^ฅ have voted!
             </Title>
             <Text ta="center" mb="md">
               ❤️🤘❤️ List all the voters! ❤️🤘❤️
@@ -513,6 +513,7 @@ export default function ProjectDetail({ project }: { project: ProjectDetail }) {
                 <Table.Tr>
                   <Table.Th>Address</Table.Th>
                   <Table.Th ta="right">Votes</Table.Th>
+                  {/* TODO: count the votes person num. */}
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody>
