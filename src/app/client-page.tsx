@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 'use client'
 
+import { shortAddress } from '@/utils/address'
 import {
   Anchor,
   Badge,
@@ -17,6 +18,7 @@ import {
   Title,
   Center,
   Table,
+  Tooltip,
 } from '@mantine/core'
 import Link from 'next/link'
 import NavigationBar from '@/components/NavigationBar'
@@ -522,7 +524,12 @@ export default function ProjectDetail({ project }: { project: ProjectDetail }) {
                     <Table.Tr key={voter.address}>
                       
                       
-                      <Table.Td>{new RoochAddress(voter.address).toStr()}</Table.Td> 
+                      <Table.Td>
+                        {/* TODO: make it link to the did panel of the address */}
+                        <Tooltip label={new RoochAddress(voter.address).toStr()} withArrow>
+                          <span>{shortAddress(new RoochAddress(voter.address).toStr())}</span>
+                        </Tooltip>
+                      </Table.Td> 
                       {/* TODO: Tag the wallet owner */}
                       {/* HINT: DO NOT DELETE THIS LINE. Bitcoin Address => Hex => Rooch Address , it's hash function*/}
                       <Table.Td ta="right">{voter.value}</Table.Td>
