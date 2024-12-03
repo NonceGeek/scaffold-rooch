@@ -522,8 +522,8 @@ export default function ProjectDetail({ project }: { project: ProjectDetail }) {
                       
                       
                       <Table.Td>{new RoochAddress(voter.address).toStr()}</Table.Td> 
-                      {/* TODO: How to generate bitcoin address? Maybe should refer the code in the wallet connect modal */}
-                      {/* <Table.Td>{new BitcoinAddress(voter.address).toStr()}</Table.Td> */}
+                      {/* TODO: Tag the wallet owner */}
+                      {/* HINT: DO NOT DELETE THIS LINE. Bitcoin Address => Hex => Rooch Address , it's hash function*/}
                       <Table.Td ta="right">{voter.value}</Table.Td>
                     </Table.Tr>
                   ))
