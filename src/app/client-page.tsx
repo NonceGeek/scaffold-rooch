@@ -29,7 +29,7 @@ import {
   useRoochClient,
   useRoochClientQuery,
 } from '@roochnetwork/rooch-sdk-kit'
-import { Args, Transaction } from '@roochnetwork/rooch-sdk'
+import { Args, Transaction, RoochAddress, BitcoinAddress } from '@roochnetwork/rooch-sdk'
 import { AnnotatedMoveStructView } from '@roochnetwork/rooch-sdk/src/client/types/generated'
 import { useEffect, useState } from 'react'
 import { getTokenInfo } from '@/app/stake/util'
@@ -519,8 +519,11 @@ export default function ProjectDetail({ project }: { project: ProjectDetail }) {
                 {voters.length ? (
                   voters.map((voter) => (
                     <Table.Tr key={voter.address}>
-                      {/* TODO: transfer the hex to the btc address */}
-                      <Table.Td>{voter.address}</Table.Td>
+                      
+                      
+                      <Table.Td>{new RoochAddress(voter.address).toStr()}</Table.Td> 
+                      {/* TODO: How to generate bitcoin address? Maybe should refer the code in the wallet connect modal */}
+                      {/* <Table.Td>{new BitcoinAddress(voter.address).toStr()}</Table.Td> */}
                       <Table.Td ta="right">{voter.value}</Table.Td>
                     </Table.Tr>
                   ))
