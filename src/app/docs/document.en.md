@@ -1,5 +1,7 @@
 ## Overview
 
+[查看中文版本](/docs?lang=cn)
+
 Grow Bitcoin is an ecosystem acceleration platform that focuses on connecting the Bitcoin users and stakers to the projects. Grow Bitcoin is operated by the Rooch Network team.
 
 As a Bitcoin staker or user, you get to earn BitXP as well as the project XP by voting for the projects you like, with your Bitcoin as the stake but without having to move your Bitcoin at all.
@@ -26,9 +28,9 @@ There are 4 simple steps:
    By simply holding your BTC in their current way, you get to claim $GROW tokens in a time-weighted style. I.e. the more BTC you hold and the longer you hold them, the more $GROW you will receive.
 3. Vote for the Bitcoin projects you like
    Go to our projects page and spend your $GROW tokens to vote for those projects.
-4. Earn BitXP and the project XP
+4. Earn BitXP and the project XP.
 
-   For each $GROW token you spend, you get to earn 1 $BitXP and the project you’ve voted gets to earn
+   For each $GROW token you spend, you get to earn 1 $BitXP and the project you’ve voted gets to earn $XP。
 
 ### As a Bitcoin Project Builder
 
@@ -50,7 +52,7 @@ We currently support 3 types of BTC holding approach: Self-Holding, Babylon Stak
 
 Self-Holding your BTC on the Bitcoin mainnet, no need of sending them into another wallet or making a single Bitcoin transaction. This is the most flexible and secured way of earning the $GROW token.
 
-For each BTC that you hold for each day , you are eligible to claim 1,000 $GROW tokens.
+For each BTC that you hold for each day , you are eligible to claim the $GROW tokens.
 
 > The ability of proving that you are holding BTC on the Bitcoin mainnet is a feature supported by the Rooch Network. Once you login the Grow Bitcoin platform by connecting your Bitcoin wallet, the underlying smart contract will be able to access the state of your Bitcoin wallet and response to state changes in real time.
 
@@ -58,7 +60,7 @@ For each BTC that you hold for each day , you are eligible to claim 1,000 $GROW 
 
 Staking your BTC into the Babylon protocol is another way of holding your BTC on the mainnet. This is also a safe way for you to hold your BTC but with less flexibility as once its staked it takes a fixed period to unbound them and withdraw.
 
-For each BTC that you stake into Babylon, you are eligible to claim 450,000 $GROW tokens.
+For each BTC that you stake into Babylon, you are eligible to claim the $GROW tokens.
 
 > Learn more details about Babylon Staking at https://babylonlabs.io/
 
@@ -66,7 +68,7 @@ For each BTC that you stake into Babylon, you are eligible to claim 450,000 $GRO
 
 If you are holding BTC Liquid Restaking/Staking Tokens or any form of wrapped BTC, you can bridge them to the Rooch Network and lock them with a customized period, using smart contracts.
 
-For each BTC that you choose to lock for each day, you are eligible to claim 1,000 $GROW tokens.
+For each BTC that you choose to lock for each day, you are eligible to claim the $GROW tokens.
 
 ### Implementation Explain
 
@@ -88,6 +90,6 @@ On the Grow Bitcoin platform, each project will have its own Project XP. The pro
 
 ## Asset Security
 
-All your BTCs are safe, and here’s why.
+All your BTCs are safe, and here’s why:
 
-If you choose to participate the Grow Bitcoin initiative with Self-Holding, all your BTC are still protected by your Bitcoin wallet private key. During the whole process, you won’t be asked to send a single Bitcoin transaction.
+**If you choose to participate the Grow Bitcoin initiative with Self-Holding, all your BTC are still protected by your Bitcoin wallet private key. During the whole process, you won’t be asked to send a single Bitcoin transaction.**

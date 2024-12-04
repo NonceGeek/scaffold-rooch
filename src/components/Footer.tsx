@@ -16,13 +16,13 @@ export default function Footer() {
           </Link>
 
           <Group gap="xs">
-            <Anchor c="dark" href="https://twitter.com/root_mud">
+            <Anchor c="dark" href="https://twitter.com/0xleeduckgo">
               <IconBrandX />
             </Anchor>
-            <Anchor c="dark" href="https://github.com/rootmud">
+            <Anchor c="dark" href="https://github.com/noncegeek/scaffold-rooch">
               <IconBrandGithub />
             </Anchor>
-            <Anchor c="dark" href="https://t.me/rootmud">
+            <Anchor c="dark" href="https://t.me/leeduckgo">
               <IconBrandTelegram />
             </Anchor>
             {/*<Anchor c="dark">*/}

@@ -69,7 +69,7 @@ function DesktopNavigationBar({ style }: { style?: any }) {
           </Menu>
           <Anchor
             component="a"
-            href="https://grow.rooch.network/docs"
+            href="/docs"
             c="dark"
             underline="never"
             target="_blank"
@@ -177,7 +177,7 @@ function MobileNavigationBar({ style }: { style?: any }) {
           </Button>
           <Button
             component="a"
-            href="https://grow.rooch.network/docs"
+            href="/docs"
             style={{ borderRadius: '0.325rem' }}
             variant="outline"
             target="_blank"

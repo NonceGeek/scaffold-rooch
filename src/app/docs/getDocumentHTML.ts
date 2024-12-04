@@ -11,8 +11,9 @@ import { toc } from 'mdast-util-toc'
 import { toHast } from 'mdast-util-to-hast'
 import { toHtml } from 'hast-util-to-html'
 
-export default async function getDocumentHTML() {
-  const fileContents = fs.readFileSync(path.join(process.cwd(), 'src/app/docs/document.md'), 'utf8')
+export default async function getDocumentHTML(language: string) {
+  const filePath = path.join(process.cwd(), `src/app/docs/document.${language}.md`)
+  const fileContents = fs.readFileSync(filePath, 'utf8')
 
   const processedContent = await unified()
     .use(markdown)
