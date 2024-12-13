@@ -1,6 +1,58 @@
-## Overview
-
 [查看中文版本](/docs?lang=cn)
+
+## RootMUD DAO Voting Guide
+
+Participate in the RootMUD community using the Rooch voting system!
+
+### Prerequisites
+
+1. Have a Unisat wallet.
+2. Have any **Bitcoin assets** in your wallet.
+3. Get `gas`: [https://portal.rooch.network/faucet/](https://portal.rooch.network/faucet/)
+
+### Step-by-Step Voting Process
+
+**1. Access the Voting Panel**
+
+Visit [vote.rootmud.xyz](https://vote.rootmud.xyz) to access the voting interface.
+
+**2. Connect Your Wallet**
+
+Click "Connect Wallet", select your provider, and authorize the connection.
+
+**3. Browse the Voting Interface**
+
+Explore active proposals, your voting power, and upcoming events.
+
+**4. Vote**
+
+Enter your vote amount to participate:
+
+![image-20241204221454902](https://p.ipic.vip/jwp6x7.png)
+
+**5. Confirm and Verify Your Vote**
+
+Authorize the transaction in your wallet. Check the voters list on the voting panel to ensure your vote has been recorded.
+
+### Troubleshooting Tips
+
+1. Ensure your wallet is connected and has sufficient funds for gas fees: [https://portal.rooch.network/faucet/](https://portal.rooch.network/faucet/).
+
+2. If you encounter any unexpected issues, ask questions in the [RootMUD community](https://t.me/rootmud).
+
+### RootMUD Community Links
+
+[Move Game Kit](https://move-game-kit.rootmud.xyz)
+
+[AI Tool Kit](https://datai.rootmud.xyz)
+
+GitHub: [RootMUD](https://github.com/rootmud) | [NonceGeek](https://github.com/noncegeek)
+
+[Whitepaper(CN)](https://mp.weixin.qq.com/s/yzIQjbMvcGlzg-IMc7fq4Q)
+
+---
+
+## Overview
 
 Grow Bitcoin is an ecosystem acceleration platform that focuses on connecting the Bitcoin users and stakers to the projects. Grow Bitcoin is operated by the Rooch Network team.
 

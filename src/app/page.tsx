@@ -30,7 +30,7 @@ export default async function ProjectDetail() {
     slug: 'rmud',
     name: 'RootMUD DAO',
     description:
-      '* Move Game Kit: [https://move-game-kit.rootmud.xyz](https://gamekit.rootmud.xyz/) \n* AI Tool kit: [https://datai.rootmud.xyz](https://datai.rootmud.xyz) \n * Githubs: \n      - [https://github.com/rootmud](https://github.com/rootmud) \n      - [https://gitub.com/noncegeek](https://github.com/noncegeek) \n* Whitepaper: \n  - CN: [https://mp.weixin.qq.com/s/yzIQjbMvcGlzg-IMc7fq4Q](https://mp.weixin.qq.com/s/yzIQjbMvcGlzg-IMc7fq4Q)\n',
+      '* Move Game Kit: [https://move-game-kit.rootmud.xyz](https://move-game-kit.rootmud.xyz/) \n* AI Tool kit: [https://datai.rootmud.xyz](https://datai.rootmud.xyz) \n * Githubs: \n      - [https://github.com/rootmud](https://github.com/rootmud) \n      - [https://gitub.com/noncegeek](https://github.com/noncegeek) \n* Whitepaper: \n  - CN: [https://mp.weixin.qq.com/s/yzIQjbMvcGlzg-IMc7fq4Q](https://mp.weixin.qq.com/s/yzIQjbMvcGlzg-IMc7fq4Q)\n',
     oneLiner: 'Bitcoin-based & AI-powered DAO, buidling Autonomous World on Move.',
     tags: ['DAO', 'Gaming', 'Infra', 'Move'],
     website: 'https://www.rootmud.xyz/',

@@ -1,6 +1,60 @@
-## 概述
-
 [Check the EN version](/docs)
+
+## RootMUD DAO 投票指南
+
+使用 Rooch 投票系统参与 RootMUD 社区！
+
+### 先决条件
+
+1. 有 Unisat 钱包。
+2. 钱包里面有任意的 **Bitcoin 资产** 。
+3. 获取 `gas`: [https://portal.rooch.network/faucet/](https://portal.rooch.network/faucet/)
+
+### 分步投票流程
+
+**1. 访问投票面板**
+
+访问 [投票界面](https://vote.rootmud.xyz)。
+
+**2. 连接您的钱包**
+
+单击“连接钱包”，选择您的提供商并授权连接。
+
+**3. 浏览投票界面**
+
+探索活跃的提案、您的投票权和即将发生的事件。
+
+**4. 投票**
+
+输入你的票数进行投票：
+
+![image-20241204221454902](https://p.ipic.vip/jwp6x7.png)
+
+**5. 确认并验证您的投票**
+
+在您的钱包中授权交易。检查投票面板上的投票者列表，确保您的投票已被记录。
+
+### 故障排除提示
+
+1. 确保您的钱包已连接并有足够的资金支付 gas 费用，如果没有 gas 请在 faucet 页面获取：
+
+> [https://portal.rooch.network/faucet/](https://portal.rooch.network/faucet/)
+
+2. 如果有任何意外问题，在社区中进行提问：[rootmud](https://t.me/rootmud)。
+
+### RootMUD 社区相关链接
+
+[Move Game Kit](https://move-game-kit.rootmud.xyz)
+
+[AI Tool Kit](https://datai.rootmud.xyz)
+
+[GitHub](https://github.com/rootmud) | [NonceGeek](https://github.com/noncegeek)
+
+[Whitepaper(CN)](https://mp.weixin.qq.com/s/yzIQjbMvcGlzg-IMc7fq4Q)
+
+---
+
+## 概述
 
 Grow Bitcoin 是一个生态系统加速平台，专注于将比特币用户和质押者与项目联系起来。Grow Bitcoin 由 Rooch Network 团队运营。
 
